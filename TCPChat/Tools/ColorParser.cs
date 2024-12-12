@@ -10,24 +10,24 @@ namespace TCPChat.Tools
             try
             {
                 var consoleColor = Color.White;
-                if(color[0] != '#')         //If this is not html color
+                
+                if(color[0] != '#')
                 {
-                    KnownColor knownColor = Enum.Parse<KnownColor>(color, true);
-                    consoleColor = Color.FromKnownColor(knownColor);    //Just parse it
+                    var knownColor = Enum.Parse<KnownColor>(color, true);
+                    consoleColor = Color.FromKnownColor(knownColor);
                 }
                 else if(color.Length == 7)
                 {
-                    consoleColor = ColorTranslator.FromHtml(color); // Or parse html color
-                    byte[] byteColor = BitConverter.GetBytes(consoleColor.ToArgb());
+                    consoleColor = ColorTranslator.FromHtml(color);
+                    var byteColor = BitConverter.GetBytes(consoleColor.ToArgb());
 
                     if(byteColor[0] <= 48 && byteColor[1] <= 48 && byteColor[2] <= 48)
-                    {
                         consoleColor = Color.White;
-                    }
                 }
 
 
-                if (consoleColor == Color.Black) consoleColor = Color.White; //If this is Black Color, then it will be White color, no racism)
+                if (consoleColor == Color.Black)
+                    consoleColor = Color.White; //If this is Black Color, then it will be White color, no racism)
 
                 return consoleColor;
             }

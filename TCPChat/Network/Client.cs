@@ -8,50 +8,57 @@ namespace TCPChat.Network
 {
     public class Client
     {
+        public event Action Notification;
+        
+        private readonly TcpClient _client;
+        private readonly Server _server;
+        
+        private User _user;
+        
         protected internal string Id { get; }
         protected internal NetworkStream Stream { get; private set; }
-        private User user;
-        private readonly TcpClient client;
-        private readonly Server server;
 
-        public Client(TcpClient tcpClient, Server serverObject)
+        public Client(TcpClient tcpClient, Server server)
         {
-            Id = Guid.NewGuid().ToString();                     //Generate new unique ID
-            client = tcpClient;
-            server = serverObject;
-            serverObject.AddConnection(this);
+            Id = Guid.NewGuid().ToString();
+            
+            _client = tcpClient;
+            _server = server;
+            
+            server.AddConnection(this);
         }
 
         public void Process()
         {  
             try
             {
-                Stream = client.GetStream();    //Gets stream
-                    
-                InitializeUserData();           //Gets userData
+                Stream = _client.GetStream();
+                InitializeUserData();
 
                 while (true)
                 {
                     try
                     {
-                        var message = GetMessage();  //While stream is available lets read stream
-                        if (message.Length > 0)         //If message is not empty
+                        var message = GetMessage();
+                        
+                        if (message.Length > 0)
                         {
                             var msg = IMessageDeserializable.Parse(message);
 
                             switch(msg.PostCode)
                             {
-                                case { } i when (i >= 1 && i <= 4):
+                                case >= 1 and <= 4:
                                 {
-                                    server.Notification();
-                                    server.BroadcastMessage(msg, Id);   //If this is regular message then broadcast it
+                                    Notification?.Invoke();
+                                    _server.BroadcastMessage(msg, Id);
+                                    
                                     break;
                                 }
-                                case 6:                                         //if client updates his UserData
+                                case 6:
                                 {
                                     var userDataMessage = msg as UserDataMessage;
                                     if(userDataMessage?.Method == Method.Send)
-                                        user = new User(userDataMessage?.Sender.UserName, userDataMessage.Sender.Color); //Update UserData on server
+                                        _user = new User(userDataMessage.Sender.UserName, userDataMessage.Sender.Color);
                                     
                                     break;
                                 }
@@ -66,10 +73,10 @@ namespace TCPChat.Network
 
                                     break;
                                 }
-                                case 9:                                     //If user Disconnecting
+                                case 9:
                                 {
-                                    server.BroadcastMessage(msg, Id);   //Broadcast it
-                                    server.RemoveConnection(Id);        //And remove connection
+                                    _server.BroadcastMessage(msg, Id);
+                                    _server.RemoveConnection(Id);
                                     break;
                                 }
                                 default:
@@ -81,8 +88,8 @@ namespace TCPChat.Network
                     }
                     catch
                     {
-                        var disconnectionMsg = new ConnectionMessage(Connection.Disconnect, user);          //If there is error, disconnect this user
-                        server.BroadcastMessage(disconnectionMsg, Id);
+                        var disconnectionMsg = new ConnectionMessage(Connection.Disconnect, _user);
+                        _server.BroadcastMessage(disconnectionMsg, Id);
                         break;
                     }
                 }
@@ -93,7 +100,7 @@ namespace TCPChat.Network
             }
             finally
             {
-                server.RemoveConnection(Id);
+                _server.RemoveConnection(Id);
                 Close();
             }
         }
@@ -106,13 +113,13 @@ namespace TCPChat.Network
             if (!VersionVerifier.Verify(msg.Hash))
             {
                 Stream.Write(new PostCodeMessage(11).Serialize());
-                server.RemoveConnection(Id);
+                _server.RemoveConnection(Id);
 
                 return;
             }
 
             SendId();
-            server.BroadcastMessage(msg, Id);
+            _server.BroadcastMessage(msg, Id);
         }
 
         private void SendId()
@@ -138,7 +145,7 @@ namespace TCPChat.Network
         protected internal void Close()
         {
             Stream?.Close();
-            client?.Close();
+            _client?.Close();
         }
     }
 }

@@ -1,28 +1,21 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
-using TCPChat.Tools;
+using SimpleContainer;
 
 namespace TCPChat.Network
 {
-    public class Connector
+    public class Connector(IContainer container)
     {
+        public string Host { get; set; } = "127.0.0.1";
+        public int Port { get; set; } = 23;
+        
         public Server Server { get; private set; }
         public TcpClient Client { get; private set; }
         public NetworkStream Stream { get; private set; }
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public ConnectionType ConnectionType { get; private set; }
+        public ConnectionType ConnectionType { get; private set; } = ConnectionType.None;
 
-
-        public Connector(ConnectionType connectionConnectionType = ConnectionType.None, string host = "127.0.0.1", int port = 23)
-        {
-            ConnectionType = connectionConnectionType;
-            Host = host;
-            Port = port;
-        }
-
-        public void StartServer(Cmd cmd, Action notification)
+        public void StartServer()
         {
             if (Server != null)
             {
@@ -32,7 +25,9 @@ namespace TCPChat.Network
 
             try
             {
-                Server = new Server(cmd, Port, notification);
+                Server = container.Resolve<Server>();
+                Server.SetPort(Port);
+                
                 ConnectionType = ConnectionType.Server;
             }
             catch
@@ -115,6 +110,10 @@ namespace TCPChat.Network
                     break;
                 case ConnectionType.Server: StopServer(listenThread);
                     break;
+                case ConnectionType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

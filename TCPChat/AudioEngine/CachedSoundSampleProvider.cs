@@ -1,29 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using NAudio.Wave;
 
 namespace TCPChat.AudioEngine
 {
     internal class CachedSoundSampleProvider : ISampleProvider
     {
-        private readonly CachedSound cachedSound;
-        private long position;
+        private readonly CachedSound _cachedSound;
+        
+        private long _position;
 
-        public CachedSoundSampleProvider(CachedSound cachedSound)
-        {
-            this.cachedSound = cachedSound;
-        }
+        public WaveFormat WaveFormat => _cachedSound.WaveFormat;
+        
+        public CachedSoundSampleProvider(CachedSound cachedSound) => _cachedSound = cachedSound;
+
 
         public int Read(float[] buffer, int offset, int count)
         {
-            var availableSamples = cachedSound.AudioData.Length - position;
+            var availableSamples = _cachedSound.AudioData.Length - _position;
             var samplesToCopy = Math.Min(availableSamples, count);
-            Array.Copy(cachedSound.AudioData, position, buffer, offset, samplesToCopy);
-            position += samplesToCopy;
+            
+            Array.Copy(_cachedSound.AudioData, _position, buffer, offset, samplesToCopy);
+            
+            _position += samplesToCopy;
+            
             return (int)samplesToCopy;
         }
-
-        public WaveFormat WaveFormat => cachedSound.WaveFormat;
     }
 }

@@ -1,36 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\CS\\TCPChat\\TCPChat\\TCPChat.csproj": {}
+    "C:\\Users\\a.laboha\\RiderProjects\\ConsoleTCPChat\\TCPChat\\TCPChat.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\CS\\TCPChat\\TCPChat\\TCPChat.csproj": {
+    "C:\\Users\\a.laboha\\RiderProjects\\ConsoleTCPChat\\TCPChat\\TCPChat.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\CS\\TCPChat\\TCPChat\\TCPChat.csproj",
+        "projectUniqueName": "C:\\Users\\a.laboha\\RiderProjects\\ConsoleTCPChat\\TCPChat\\TCPChat.csproj",
         "projectName": "TCPChat",
-        "projectPath": "D:\\Projects\\CS\\TCPChat\\TCPChat\\TCPChat.csproj",
-        "packagesPath": "C:\\Users\\TonSharp\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\CS\\TCPChat\\TCPChat\\obj\\",
+        "projectPath": "C:\\Users\\a.laboha\\RiderProjects\\ConsoleTCPChat\\TCPChat\\TCPChat.csproj",
+        "packagesPath": "C:\\Users\\a.laboha\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\a.laboha\\RiderProjects\\ConsoleTCPChat\\TCPChat\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
-        ],
+        "UsingMicrosoftNETSdk": false,
         "configFilePaths": [
-          "C:\\Users\\TonSharp\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\a.laboha\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "net5.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -38,15 +33,24 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net9.0": {
+          "targetAlias": "net9.0",
           "dependencies": {
             "Colorful.Console": {
               "target": "Package",
               "version": "[1.2.15, )"
+            },
+            "McMaster.Extensions.CommandLineUtils": {
+              "target": "Package",
+              "version": "[4.1.1, )"
             },
             "NAudio": {
               "target": "Package",
@@ -59,7 +63,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -68,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

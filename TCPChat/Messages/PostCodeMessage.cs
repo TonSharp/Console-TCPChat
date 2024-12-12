@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace TCPChat.Messages
 {

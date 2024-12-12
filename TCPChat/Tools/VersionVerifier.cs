@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Text;
 using System.IO;
+using System.Text;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace TCPChat.Tools
 {
@@ -17,31 +17,19 @@ namespace TCPChat.Tools
             return !localHash.Where((t, i) => t != remoteHash[i]).Any();
         }
 
-        public static void PrintHash()
-        {
-            byte[] Data = GetHash();
-
-            StringBuilder sOutput = new StringBuilder(Data.Length);
-            int i;
-            for (i = 0; i < Data.Length; i++)
-            {
-                sOutput.Append(Data[i].ToString("X2"));
-            }
-            Console.WriteLine(sOutput.ToString());
-        }
+        public static void PrintHash() => Console.WriteLine(GetStringHash());
 
         public static string GetStringHash()
         {
-            byte[] Data = GetHash();
-
-            StringBuilder sOutput = new StringBuilder(Data.Length);
-            int i;
-            for (i = 0; i < Data.Length; i++)
+            var data = GetHash();
+            var builder = new StringBuilder(data.Length);
+            
+            foreach (var b in data)
             {
-                sOutput.Append(Data[i].ToString("X2"));
+                builder.Append(b.ToString("X2"));
             }
 
-            return sOutput.ToString();
+            return builder.ToString();
         }
 
         public static byte[] GetHash()

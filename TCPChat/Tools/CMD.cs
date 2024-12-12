@@ -7,114 +7,87 @@ namespace TCPChat.Tools
 {
     public class Cmd
     {
-        private readonly Vector2 messagePos, promptPos, defaultPromptPos, currentPromptPos;
-
-        /// <summary>
-        /// Checks buffer, if message top position close to prompt position then move prompt
-        /// </summary>
+        private readonly Vector2 _messagePos, _promptPos, _defaultPromptPos, _currentPromptPos;
+        
         private void CheckBufferArea()
         {
-            if (messagePos.Y >= promptPos.Y)
+            if (_messagePos.Y >= _promptPos.Y)
             {
-                Console.SetCursorPosition(promptPos.X, promptPos.Y);
+                Console.SetCursorPosition(_promptPos.X, _promptPos.Y);
                 Console.Write("  ");
-                promptPos.Y++;
-                Console.SetCursorPosition(promptPos.X, promptPos.Y);
+                
+                _promptPos.Y++;
+                
+                Console.SetCursorPosition(_promptPos.X, _promptPos.Y);
             }
         }
 
         public Cmd()
         {
-            messagePos = new Vector2();
-            defaultPromptPos = new Vector2(0, 15);
-            currentPromptPos = new Vector2(0, defaultPromptPos.Y);
-            promptPos = new Vector2(0, defaultPromptPos.Y);
-            messagePos.PositionChanged += CheckBufferArea;
+            _messagePos = new Vector2();
+            _defaultPromptPos = new Vector2(0, 15);
+            _currentPromptPos = new Vector2(0, _defaultPromptPos.Y);
+            _promptPos = new Vector2(0, _defaultPromptPos.Y);
+            _messagePos.PositionChanged += CheckBufferArea;
         }
-
-        /// <summary>
-        /// Writes message in beginning of line
-        /// </summary>
-        /// <typeparam name="T">Type of message (string, int, e.t.c.)</typeparam>
-        /// <param name="message">Message</param>
+        
         public void WriteLine<T>(T message)
         {
-            currentPromptPos.X = Console.CursorLeft;
-            currentPromptPos.Y = promptPos.Y;
+            _currentPromptPos.X = Console.CursorLeft;
+            _currentPromptPos.Y = _promptPos.Y;
 
-            Console.SetCursorPosition(messagePos.X, messagePos.Y);
+            Console.SetCursorPosition(_messagePos.X, _messagePos.Y);
             Console.WriteLine(message, Color.White);
-            messagePos.Y++;
+            _messagePos.Y++;
         }
-
-        /// <summary>
-        /// Writes message from user
-        /// </summary>
-        /// <typeparam name="T">Type of message (string, int, e.t.c.)</typeparam>
-        /// <param name="message">Message</param>
-        /// <param name="sender">Who sends this message</param>
+        
         public void UserWriteLine<T>(T message, User sender)
         {
-            currentPromptPos.X = Console.CursorLeft;
-            currentPromptPos.Y = promptPos.Y;
+            _currentPromptPos.X = Console.CursorLeft;
+            _currentPromptPos.Y = _promptPos.Y;
 
-            Console.SetCursorPosition(messagePos.X, messagePos.Y);
+            Console.SetCursorPosition(_messagePos.X, _messagePos.Y);
             Console.Write(sender.UserName, sender.Color);
             Console.Write(": ", Color.White);
             Console.WriteLine(message, Color.White);
-            messagePos.Y++;
+            _messagePos.Y++;
         }
-
-        /// <summary>
-        /// Write message about connection
-        /// </summary>
-        /// <param name="sender">Who connects, disconnects</param>
-        /// <param name="str">Connection message</param>
+        
         public void ConnectionMessage(User sender, string str)
         {
-            currentPromptPos.X = Console.CursorLeft;
-            currentPromptPos.Y = promptPos.Y;
+            _currentPromptPos.X = Console.CursorLeft;
+            _currentPromptPos.Y = _promptPos.Y;
 
-            Console.SetCursorPosition(messagePos.X, messagePos.Y);
+            Console.SetCursorPosition(_messagePos.X, _messagePos.Y);
             Console.Write(sender.UserName, sender.Color);
             Console.WriteLine(" " + str, Color.White);
-            messagePos.Y++;
+            _messagePos.Y++;
         }
-
-        /// <summary>
-        /// Reads commands in command prompt
-        /// </summary>
-        /// <param name="user">Who enter commands</param>
-        /// <returns>Input string</returns>
+        
         public string ReadLine(User user)
         {
-            Console.SetCursorPosition(promptPos.X, promptPos.Y);
+            Console.SetCursorPosition(_promptPos.X, _promptPos.Y);
             Console.Write(user.UserName, user.Color);
             Console.Write("> ", Color.White);
-            string input = Console.ReadLine();
-            Console.SetCursorPosition(promptPos.X, promptPos.Y);
+            
+            var input = Console.ReadLine();
+            
+            Console.SetCursorPosition(_promptPos.X, _promptPos.Y);
             Console.Write(new string(' ',user.UserName.Length + input.Length + 2));
 
             return input;
         }
 
-        /// <summary>
-        /// Switches back to command prompt in old position after message receiving
-        /// </summary>
         public void SwitchToPrompt()
         {
-            Console.SetCursorPosition(currentPromptPos.X, currentPromptPos.Y);
+            Console.SetCursorPosition(_currentPromptPos.X, _currentPromptPos.Y);
         }
-
-        /// <summary>
-        /// Parses messages PostCodes
-        /// </summary>
-        /// <param name="message">Received Message</param>
+        
         public void ParseMessage(Message message)
         {
             switch (message.PostCode)
             {
-                case { } i when (i >= 1 && i <= 4):
+                case <= 4 and >= 1:
                 {
                     var msg = message as SimpleMessage;
                     UserWriteLine(msg?.SendData, msg?.Sender);
@@ -125,7 +98,10 @@ namespace TCPChat.Tools
                 case 7:
                 {
                     var msg = message as ConnectionMessage;
-                    if(msg?.Connection == Connection.Connect) UserWriteLine("Has joined", msg.Sender);
+                    
+                    if(msg?.Connection == Connection.Connect)
+                        UserWriteLine("Has joined", msg.Sender);
+                    
                     else UserWriteLine("Has disconnected", msg?.Sender);
                     
                     break;
@@ -137,15 +113,12 @@ namespace TCPChat.Tools
             CheckBufferArea();
             SwitchToPrompt();
         }
-
-        /// <summary>
-        /// Clears console buffer
-        /// </summary>
+        
         public void Clear()
         {
             Console.Clear();
-            messagePos.Y = 0;
-            promptPos.Y = defaultPromptPos.Y;
+            _messagePos.Y = 0;
+            _promptPos.Y = _defaultPromptPos.Y;
         }
     }
 }
