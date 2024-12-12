@@ -1,7 +1,4 @@
-﻿using System.IO;
-using TCPChat.Network;
-
-namespace TCPChat.Messages
+﻿namespace TCPChat.Messages
 {
     public abstract class Message : IMessage
     {

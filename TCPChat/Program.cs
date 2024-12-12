@@ -13,6 +13,8 @@ namespace TCPChat;
 
 internal class Program
 {
+    public const string DllName = "TCPChat.dll";
+    
     private readonly Regex _hostRegex = new(@"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
 
     private NetworkManager _network;

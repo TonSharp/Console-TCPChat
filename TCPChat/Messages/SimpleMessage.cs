@@ -1,6 +1,6 @@
 ﻿using TCPChat.Network;
 using System.IO;
-using TCPChat.Tools;
+using TCPChat.Extensions;
 
 namespace TCPChat.Messages
 {
@@ -25,7 +25,7 @@ namespace TCPChat.Messages
         public override byte[] Serialize()
         {
             var userData = Sender.Serialize();
-            var messageData = Serializer.SerializeString(SendData);
+            var messageData = SendData.Serialize();
             var data = new byte[sizeof(int) + userData.Length + messageData.Length];
 
             using var stream = new MemoryStream(data);
@@ -46,10 +46,10 @@ namespace TCPChat.Messages
             if (code != 1) return;
             PostCode = code;
             
-            var userData = Serializer.CopyFrom(data, sizeof(int));
+            var userData = data.CopyFrom(sizeof(int));
             Sender = new User(userData, out var messageData);
 
-            SendData = Serializer.DeserializeString(messageData, 1)[0];
+            SendData = messageData.DeserializeStrings(1)[0];
         }
     }
 }

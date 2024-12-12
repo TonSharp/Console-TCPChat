@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using TCPChat.Tools;
 
 namespace TCPChat.Messages
 {

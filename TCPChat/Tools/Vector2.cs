@@ -2,12 +2,12 @@
 
 namespace TCPChat.Tools
 {
-    public class Vector2
+    public class Vector2(int x = 0, int y = 0)
     {
         public event Action PositionChanged;
         
-        private int _x;
-        private int _y;
+        private int _x = x;
+        private int _y = y;
 
         public int X
         {
@@ -27,12 +27,6 @@ namespace TCPChat.Tools
                 _y = value;
                 PositionChanged?.Invoke();
             }
-        }
-
-        public Vector2(int x = 0, int y = 0)
-        {
-            _x = x;
-            _y = y;
         }
     }
 }

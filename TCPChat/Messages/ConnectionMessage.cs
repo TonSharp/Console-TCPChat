@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using TCPChat.Extensions;
 using TCPChat.Network;
 using TCPChat.Tools;
 
@@ -26,7 +27,7 @@ namespace TCPChat.Messages
         public override byte[] Serialize()
         {
             byte[] data = null;
-            var connectionData = Serializer.SerializeString(Connection.ToString());
+            var connectionData = Connection.ToString().Serialize();
             var userData = Sender.Serialize();
 
             switch (Connection)
@@ -73,9 +74,9 @@ namespace TCPChat.Messages
             if (code != 7) return;
             PostCode = code;
 
-            var messageData = Serializer.CopyFrom(data, sizeof(int));
+            var messageData = data.CopyFrom(sizeof(int));
 
-            Connection = Enum.Parse<Connection>(Serializer.DeserializeString(messageData, 1, out var userAndHashData)[0], true);
+            Connection = Enum.Parse<Connection>(messageData.DeserializeStrings(1, out var userAndHashData)[0], true);
 
             Sender = new User(userAndHashData, out var hashData);
 

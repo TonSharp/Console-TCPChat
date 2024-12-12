@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using TCPChat.Tools;
+using TCPChat.Extensions;
 
 namespace TCPChat.Messages
 {
@@ -25,7 +25,7 @@ namespace TCPChat.Messages
         
         public override byte[] Serialize()
         {
-            var methodData = Serializer.SerializeString(Method.ToString());
+            var methodData = Method.ToString().Serialize();
             byte[] data = null;
             
             switch (Method)
@@ -44,7 +44,7 @@ namespace TCPChat.Messages
                     
                 case Method.Send:
                 {
-                    var idData = Serializer.SerializeString(SendData);
+                    var idData = SendData.Serialize();
                     data = new byte[sizeof(int) + methodData.Length + idData.Length];
                     using var stream = new MemoryStream(data);
                     using var writer = new BinaryWriter(stream);
@@ -75,13 +75,13 @@ namespace TCPChat.Messages
                 case 5:
                 {
                     Method = Enum.Parse<Method>(
-                        Serializer.DeserializeString(Serializer.CopyFrom(data, sizeof(int)), 1)[0]
+                        data.CopyFrom(sizeof(int)).DeserializeStrings(1)[0]
                     );
 
                         if(Method == Method.Send)
                         {
-                            var sendData = Serializer.CopyFrom(data, sizeof(int) + Serializer.GetStringDataSize(Method.ToString()));
-                            SendData = Serializer.DeserializeString(sendData, 1)[0];
+                            var sendData = data.CopyFrom(sizeof(int) + Method.ToString().GetBytesDataSize());
+                            SendData = sendData.DeserializeStrings(1)[0];
                         }
 
                     break;
@@ -89,7 +89,7 @@ namespace TCPChat.Messages
 
                 case 11:
                 {
-                    string[] messageArgs = Serializer.DeserializeString(Serializer.CopyFrom(data, sizeof(int)), 2);
+                    var messageArgs = data.CopyFrom(sizeof(int)).DeserializeStrings(2);
 
                     Method = Enum.Parse<Method>(messageArgs[0]);
                     SendData = messageArgs[1];

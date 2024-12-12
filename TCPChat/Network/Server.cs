@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using TCPChat.AudioEngine;
 using TCPChat.Messages;
 using TCPChat.Tools;
 

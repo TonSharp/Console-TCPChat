@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using TCPChat.Tools;
+using TCPChat.Extensions;
 
 namespace TCPChat.Network
 {
@@ -11,7 +11,7 @@ namespace TCPChat.Network
         {
             get
             {
-                var size = Serializer.GetStringDataSize(UserName);
+                var size = UserName.GetBytesDataSize();
                 size += sizeof(int);
 
                 return size;
@@ -43,10 +43,10 @@ namespace TCPChat.Network
         
         public User(byte[] data, out byte[] otherData)
         {
-            UserName = Serializer.DeserializeString(data, 1)[0];
+            UserName = data.DeserializeStrings(1)[0];
             
-            var userDataSize = Serializer.GetStringDataSize(UserName);
-            var colorData = Serializer.CopyFrom(data, userDataSize);
+            var userDataSize = UserName.GetBytesDataSize();
+            var colorData = data.CopyFrom(userDataSize);
 
             using (var stream = new MemoryStream(colorData))
             {
@@ -55,15 +55,15 @@ namespace TCPChat.Network
                 userDataSize += sizeof(int);
             }
 
-            otherData = Serializer.CopyFrom(data, userDataSize);        
+            otherData = data.CopyFrom(userDataSize);        
         }
         
         public User(byte[] data)
         {
-            UserName = Serializer.DeserializeString(data, 1)[0];
-            var nameDataSize = Serializer.GetStringDataSize(UserName);
+            UserName = data.DeserializeStrings(1)[0];
+            var nameDataSize = UserName.GetBytesDataSize();
 
-            var colorData = Serializer.CopyFrom(data, nameDataSize);
+            var colorData = data.CopyFrom(nameDataSize);
 
             using var stream = new MemoryStream(colorData);
             var reader = new BinaryReader(stream);
@@ -75,9 +75,9 @@ namespace TCPChat.Network
         {
             var userData = new byte[UserDataSize];
 
-            otherData = Serializer.CopyFrom(data, UserDataSize);
+            otherData = data.CopyFrom(UserDataSize);
 
-            var userDataStrings = Serializer.DeserializeString(userData, 1, out var colorData);
+            var userDataStrings = userData.DeserializeStrings(1, out var colorData);
 
             UserName = userDataStrings[0];
             Color = Color.FromArgb(Convert.ToInt32(colorData));
@@ -90,7 +90,7 @@ namespace TCPChat.Network
             using var stream = new MemoryStream(data);
             var writer = new BinaryWriter(stream);
 
-            writer.Write(Serializer.SerializeString(UserName));
+            writer.Write(UserName.Serialize());
             writer.Write(Color.ToArgb());
 
             return data;

@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
+using TCPChat.Extensions;
 
 namespace TCPChat.Tools
 {
@@ -12,32 +10,18 @@ namespace TCPChat.Tools
         {
             var localHash = GetHash();
 
-            if (localHash.Length != remoteHash.Length) return false;
+            if (localHash.Length != remoteHash.Length)
+                return false;
 
             return !localHash.Where((t, i) => t != remoteHash[i]).Any();
         }
 
-        public static void PrintHash() => Console.WriteLine(GetStringHash());
-
-        public static string GetStringHash()
-        {
-            var data = GetHash();
-            var builder = new StringBuilder(data.Length);
-            
-            foreach (var b in data)
-            {
-                builder.Append(b.ToString("X2"));
-            }
-
-            return builder.ToString();
-        }
+        public static string GetStringHash() => GetHash().ToHexString();
 
         public static byte[] GetHash()
         {
-            using var stream = new FileStream("TCPChat.dll", FileMode.Open, FileAccess.Read, FileShare.Read);
-            var hash = new MD5CryptoServiceProvider().ComputeHash(stream);
-
-            return hash;
+            using var stream = new FileStream(Program.DllName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return stream.GetMD5Hash();
         }
     }
 }
